@@ -1,7 +1,27 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { toast } from "sonner";
 
 export function NewNoteCard() {
+  const [shouldShowWelcomeText, setShouldShowWelcomeText] = useState(true);
+  const [textAreaContent, setTextAreaContent] = useState("");
+
+  function handleTextNote() {
+    setShouldShowWelcomeText(false);
+  }
+
+  function handleTextAreaChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    if (event.target.value === "") {
+      setShouldShowWelcomeText(true);
+    }
+  }
+
+  function handleSaveNote(event: FormEvent) {
+    event.preventDefault();
+    toast.success("Nota criada com sucesso.");
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger className="flex flex-col rounded-md bg-slate-700 p-5 gap-3 text-left overflow-hidden hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none">
@@ -16,20 +36,33 @@ export function NewNoteCard() {
             <Dialog.Close className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
               <X className="size-5 " />
             </Dialog.Close>
-            <div className="flex flex-col flex-1 gap-3 p-5">
-              <span className="text-sm font-medium text-slate-300">Adicionar nota</span>
-              <p className="text-sm leading-6 text-slate-400">
-                Comece <button className="font-medium text-lime-400 hover:underline">gravando uma nota em áudio</button>{" "}
-                ou se preferir{" "}
-                <button className="font-medium text-lime-400 hover:underline">utilize apenas texto.</button>
-              </p>
-            </div>
-            <button
-              type="button"
-              className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
-            >
-              Salvar nota
-            </button>
+            <form onSubmit={handleSaveNote} className="flex flex-col flex-1 ">
+              <div className="flex flex-col flex-1 gap-3 p-5">
+                <span className="text-sm font-medium text-slate-300">Adicionar nota</span>
+                {shouldShowWelcomeText ? (
+                  <p className="text-sm leading-6 text-slate-400">
+                    Comece{" "}
+                    <button className="font-medium text-lime-400 hover:underline">gravando uma nota em áudio</button> ou
+                    se preferir{" "}
+                    <button className="font-medium text-lime-400 hover:underline" onClick={handleTextNote}>
+                      utilize apenas texto.
+                    </button>
+                  </p>
+                ) : (
+                  <textarea
+                    autoFocus
+                    className="flex-1 text-sm leading-6 text-slate-400 bg-transparent resize-none outline-none"
+                    onChange={handleTextAreaChange}
+                  />
+                )}
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
+              >
+                Salvar nota
+              </button>
+            </form>
           </Dialog.Content>
         </Dialog.Overlay>
       </Dialog.Portal>

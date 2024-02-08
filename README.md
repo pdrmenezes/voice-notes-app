@@ -6,9 +6,10 @@ The app's stack consists in:
 
 - Vite
 - React + Typescript
-- Chadcn UI
 - TailwindCSS
--
+- Radix
+- Sonner
+- Date-fns
 
 ## Running locally
 
