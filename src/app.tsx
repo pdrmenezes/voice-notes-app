@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import logo from "./assets/logo-notes.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
@@ -10,6 +10,7 @@ export interface Note {
 }
 
 export function App() {
+  const [search, setSearch] = useState("");
   const [notes, setNotes] = useState<Note[] | []>(() => {
     const notesOnLocalStorage = localStorage.getItem("notes");
     if (notesOnLocalStorage) {
@@ -37,6 +38,16 @@ export function App() {
     localStorage.setItem("notes", JSON.stringify(newNotesArray));
   }
 
+  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+    const query = event.currentTarget.value;
+    setSearch(query);
+  }
+
+  const filteredNotes =
+    search !== ""
+      ? notes.filter((note) => note.content.toLocaleLowerCase().includes(search.toLocaleLowerCase()))
+      : notes;
+
   return (
     <div className="max-w-6xl mx-auto my-12 space-y-6">
       <img src={logo} alt="Notes app Logo" />
@@ -46,6 +57,8 @@ export function App() {
           name="search"
           id="search"
           placeholder="Busque em suas notas..."
+          value={search}
+          onChange={handleSearch}
           className="w-full bg-transparent text-3xl font-semibold tracking-tight placeholder:text-slate-500 outline-none"
         />
       </form>
@@ -53,7 +66,8 @@ export function App() {
 
       <div className="grid grid-cols-3 gap-6 auto-rows-[250px]">
         <NewNoteCard onCreateNote={onCreateNote} />
-        {notes.length > 0 && notes.map((note) => <NoteCard key={note.id} note={note} onDeleteNote={onDeleteNote} />)}
+        {filteredNotes.length > 0 &&
+          filteredNotes.map((note) => <NoteCard key={note.id} note={note} onDeleteNote={onDeleteNote} />)}
       </div>
     </div>
   );
