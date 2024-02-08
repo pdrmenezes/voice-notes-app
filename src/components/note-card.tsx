@@ -2,15 +2,14 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { X } from "lucide-react";
+import { Note } from "../app";
 
 interface NoteCardProps {
-  note: {
-    createdAt: Date;
-    content: string;
-  };
+  note: Note;
+  onDeleteNote: (noteId: string) => void;
 }
 
-export function NoteCard({ note }: NoteCardProps) {
+export function NoteCard({ note, onDeleteNote }: NoteCardProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger className="flex flex-col rounded-md bg-slate-800 p-5 text-left gap-3 overflow-hidden relative hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none">
@@ -35,6 +34,7 @@ export function NoteCard({ note }: NoteCardProps) {
             <button
               type="button"
               className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+              onClick={() => onDeleteNote(note.id)}
             >
               Deseja <span className="text-red-400 group-hover:underline">apagar essa nota</span>?
             </button>

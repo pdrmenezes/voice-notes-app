@@ -1,8 +1,47 @@
+import { useEffect, useState } from "react";
 import logo from "./assets/logo-notes.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
+import { toast } from "sonner";
+
+export interface Note {
+  id: string;
+  createdAt: Date;
+  content: string;
+}
 
 export function App() {
+  const [notes, setNotes] = useState<Note[] | []>([]);
+
+  useEffect(() => {
+    const notesFromLocalStorage = localStorage.getItem("notes");
+    if (notesFromLocalStorage) {
+      const parsedNotes = JSON.parse(notesFromLocalStorage);
+      setNotes(parsedNotes);
+    } else {
+      toast.info("storage is empty, no new notes");
+    }
+  }, []);
+
+  function onCreateNote(content: string) {
+    const newNote = {
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      content,
+    };
+
+    const allNotes = [newNote, ...notes];
+    setNotes(allNotes);
+    localStorage.setItem("notes", JSON.stringify(allNotes));
+  }
+
+  function onDeleteNote(noteId: string) {
+    const newNotesArray = notes.filter((note) => note.id !== noteId);
+
+    setNotes(newNotesArray);
+    localStorage.setItem("notes", JSON.stringify(newNotesArray));
+  }
+
   return (
     <div className="max-w-6xl mx-auto my-12 space-y-6">
       <img src={logo} alt="Notes app Logo" />
@@ -18,13 +57,8 @@ export function App() {
       <div className="h-px bg-slate-700"></div>
 
       <div className="grid grid-cols-3 gap-6 auto-rows-[250px]">
-        <NewNoteCard />
-        <NoteCard
-          note={{
-            createdAt: new Date(),
-            content: "lorem ipsum",
-          }}
-        />
+        <NewNoteCard onCreateNote={onCreateNote} />
+        {notes.length > 0 && notes.map((note) => <NoteCard key={note.id} note={note} onDeleteNote={onDeleteNote} />)}
       </div>
     </div>
   );

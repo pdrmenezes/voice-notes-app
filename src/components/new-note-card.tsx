@@ -3,7 +3,11 @@ import { X } from "lucide-react";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "sonner";
 
-export function NewNoteCard() {
+interface NewNoteCardProps {
+  onCreateNote: (content: string) => void;
+}
+
+export function NewNoteCard({ onCreateNote }: NewNoteCardProps) {
   const [shouldShowWelcomeText, setShouldShowWelcomeText] = useState(true);
   const [textAreaContent, setTextAreaContent] = useState("");
 
@@ -12,6 +16,8 @@ export function NewNoteCard() {
   }
 
   function handleTextAreaChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setTextAreaContent(event.target.value);
+
     if (event.target.value === "") {
       setShouldShowWelcomeText(true);
     }
@@ -19,6 +25,9 @@ export function NewNoteCard() {
 
   function handleSaveNote(event: FormEvent) {
     event.preventDefault();
+    onCreateNote(textAreaContent);
+    setTextAreaContent("");
+    setShouldShowWelcomeText(true);
     toast.success("Nota criada com sucesso.");
   }
 
@@ -52,6 +61,7 @@ export function NewNoteCard() {
                   <textarea
                     autoFocus
                     className="flex-1 text-sm leading-6 text-slate-400 bg-transparent resize-none outline-none"
+                    value={textAreaContent}
                     onChange={handleTextAreaChange}
                   />
                 )}
