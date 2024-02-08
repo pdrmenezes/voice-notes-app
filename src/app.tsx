@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import logo from "./assets/logo-notes.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
-import { toast } from "sonner";
 
 export interface Note {
   id: string;
@@ -11,17 +10,13 @@ export interface Note {
 }
 
 export function App() {
-  const [notes, setNotes] = useState<Note[] | []>([]);
-
-  useEffect(() => {
-    const notesFromLocalStorage = localStorage.getItem("notes");
-    if (notesFromLocalStorage) {
-      const parsedNotes = JSON.parse(notesFromLocalStorage);
-      setNotes(parsedNotes);
-    } else {
-      toast.info("storage is empty, no new notes");
+  const [notes, setNotes] = useState<Note[] | []>(() => {
+    const notesOnLocalStorage = localStorage.getItem("notes");
+    if (notesOnLocalStorage) {
+      return JSON.parse(notesOnLocalStorage);
     }
-  }, []);
+    return [];
+  });
 
   function onCreateNote(content: string) {
     const newNote = {
