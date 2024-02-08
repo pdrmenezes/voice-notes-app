@@ -64,7 +64,7 @@ export function App() {
       </form>
       <div className="h-px bg-slate-700"></div>
 
-      <div className="grid grid-cols-3 gap-6 auto-rows-[250px]">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
         <NewNoteCard onCreateNote={onCreateNote} />
         {filteredNotes.length > 0 &&
           filteredNotes.map((note) => <NoteCard key={note.id} note={note} onDeleteNote={onDeleteNote} />)}
